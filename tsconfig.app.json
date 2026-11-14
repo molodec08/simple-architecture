@@ -22,6 +22,9 @@
     },
 
     /* Linting */
+    // В TS 6+ strict включён по умолчанию, но IDE со встроенным TS 5 так не считает:
+    // без явного флага TanStack Router требует strictNullChecks (TS2345 в router.tsx)
+    "strict": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "erasableSyntaxOnly": true,

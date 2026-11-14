@@ -1,0 +1,1 @@
+export { ShowFacts } from './ShowFacts'

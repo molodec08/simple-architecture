@@ -10,8 +10,13 @@
       {
         "patterns": [
           {
-            "group": ["@/features/*/**", "@/services/*/**"],
-            "message": "Импортируйте модуль только через его публичный API (index.ts): @/features/<name> или @/services/<name>."
+            "group": ["**/[A-Z]*/*", "**/-[A-Z]*/*"],
+            "caseSensitive": true,
+            "message": "Компонент импортируется только через public api своей папки (index.ts): './ShowCard', а не './ShowCard/ShowCard' или './ShowCard/usePresenter'."
+          },
+          {
+            "group": ["@/model/*/**"],
+            "message": "Модель импортируйте через её index.ts: @/model/<name>."
           }
         ]
       }
@@ -26,8 +31,8 @@
           {
             "patterns": [
               {
-                "group": ["@/app", "@/app/**", "@/features", "@/features/**", "@/services", "@/services/**"],
-                "message": "shared — нижний слой: он не может зависеть от app, features и services."
+                "group": ["@/app", "@/app/**", "@/components", "@/components/**", "@/model", "@/model/**"],
+                "message": "shared — инфраструктура без бизнес-смысла: она не зависит от app, components и model."
               }
             ]
           }
@@ -35,19 +40,19 @@
       }
     },
     {
-      "files": ["src/services/**"],
+      "files": ["src/model/**"],
       "rules": {
         "no-restricted-imports": [
           "error",
           {
             "patterns": [
               {
-                "group": ["@/app", "@/app/**", "@/features", "@/features/**"],
-                "message": "services не может зависеть от app и features."
+                "group": ["@/app", "@/app/**", "@/components", "@/components/**"],
+                "message": "model не зависит от UI: импортировать можно только shared."
               },
               {
-                "group": ["@/services/*/**"],
-                "message": "Другие сервисы импортируйте только через публичный API: @/services/<name>."
+                "group": ["@/model/*/**"],
+                "message": "Другую модель импортируйте через её index.ts: @/model/<name>."
               }
             ]
           }
@@ -55,7 +60,7 @@
       }
     },
     {
-      "files": ["src/features/**"],
+      "files": ["src/components/**"],
       "rules": {
         "no-restricted-imports": [
           "error",
@@ -63,15 +68,16 @@
             "patterns": [
               {
                 "group": ["@/app", "@/app/**"],
-                "message": "features не может зависеть от app."
+                "message": "Глобальные компоненты не знают о конкретных экранах из app."
               },
               {
-                "group": ["@/features", "@/features/**"],
-                "message": "Фичи изолированы и не импортируют друг друга. Компонуйте их в app (например, в маршруте)."
+                "group": ["**/[A-Z]*/*", "**/-[A-Z]*/*"],
+                "caseSensitive": true,
+                "message": "Компонент импортируется только через public api своей папки (index.ts)."
               },
               {
-                "group": ["@/services/*/**"],
-                "message": "Сервисы импортируйте только через публичный API: @/services/<name>."
+                "group": ["@/model/*/**"],
+                "message": "Модель импортируйте через её index.ts: @/model/<name>."
               }
             ]
           }
@@ -79,7 +85,7 @@
       }
     },
     {
-      "files": ["src/app/routes/**", "src/shared/ui/kit/**"],
+      "files": ["src/shared/ui/kit/**"],
       "rules": {
         "react/only-export-components": "off"
       }

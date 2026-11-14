@@ -1,0 +1,1 @@
+export { ShowPoster } from './ShowPoster'
