@@ -1,22 +1,45 @@
 {
   "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "ignorePatterns": ["dist", "src/app/routeTree.gen.ts"],
+  "plugins": [
+    "react",
+    "typescript",
+    "oxc"
+  ],
+  "ignorePatterns": [
+    "dist",
+    "src/app/routeTree.gen.ts"
+  ],
   "rules": {
     "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }],
+    "react/only-export-components": [
+      "warn",
+      {
+        "allowConstantExport": true
+      }
+    ],
     "no-restricted-imports": [
       "error",
       {
         "patterns": [
           {
-            "group": ["**/[A-Z]*/*", "**/-[A-Z]*/*"],
+            "group": [
+              "**/[A-Z]*/*",
+              "**/-[A-Z]*/*"
+            ],
             "caseSensitive": true,
             "message": "Компонент импортируется только через public api своей папки (index.ts): './ShowCard', а не './ShowCard/ShowCard' или './ShowCard/usePresenter'."
           },
           {
-            "group": ["@/model/*/**"],
+            "group": [
+              "@/model/*/**"
+            ],
             "message": "Модель импортируйте через её index.ts: @/model/<name>."
+          },
+          {
+            "group": [
+              "@/tasks/*/**"
+            ],
+            "message": "Глобальную таску импортируйте через её public api: @/tasks/<name>."
           }
         ]
       }
@@ -24,15 +47,26 @@
   },
   "overrides": [
     {
-      "files": ["src/shared/**"],
+      "files": [
+        "src/shared/**"
+      ],
       "rules": {
         "no-restricted-imports": [
           "error",
           {
             "patterns": [
               {
-                "group": ["@/app", "@/app/**", "@/components", "@/components/**", "@/model", "@/model/**"],
-                "message": "shared — инфраструктура без бизнес-смысла: она не зависит от app, components и model."
+                "group": [
+                  "@/app",
+                  "@/app/**",
+                  "@/components",
+                  "@/components/**",
+                  "@/model",
+                  "@/model/**",
+                  "@/tasks",
+                  "@/tasks/**"
+                ],
+                "message": "shared — инфраструктура без бизнес-смысла: она не зависит от app, components, model и tasks."
               }
             ]
           }
@@ -40,18 +74,29 @@
       }
     },
     {
-      "files": ["src/model/**"],
+      "files": [
+        "src/model/**"
+      ],
       "rules": {
         "no-restricted-imports": [
           "error",
           {
             "patterns": [
               {
-                "group": ["@/app", "@/app/**", "@/components", "@/components/**"],
-                "message": "model не зависит от UI: импортировать можно только shared."
+                "group": [
+                  "@/app",
+                  "@/app/**",
+                  "@/components",
+                  "@/components/**",
+                  "@/tasks",
+                  "@/tasks/**"
+                ],
+                "message": "model не зависит от UI и тасок: импортировать можно только shared."
               },
               {
-                "group": ["@/model/*/**"],
+                "group": [
+                  "@/model/*/**"
+                ],
                 "message": "Другую модель импортируйте через её index.ts: @/model/<name>."
               }
             ]
@@ -60,24 +105,40 @@
       }
     },
     {
-      "files": ["src/components/**"],
+      "files": [
+        "src/components/**"
+      ],
       "rules": {
         "no-restricted-imports": [
           "error",
           {
             "patterns": [
               {
-                "group": ["@/app", "@/app/**"],
+                "group": [
+                  "@/app",
+                  "@/app/**"
+                ],
                 "message": "Глобальные компоненты не знают о конкретных экранах из app."
               },
               {
-                "group": ["**/[A-Z]*/*", "**/-[A-Z]*/*"],
+                "group": [
+                  "**/[A-Z]*/*",
+                  "**/-[A-Z]*/*"
+                ],
                 "caseSensitive": true,
                 "message": "Компонент импортируется только через public api своей папки (index.ts)."
               },
               {
-                "group": ["@/model/*/**"],
+                "group": [
+                  "@/model/*/**"
+                ],
                 "message": "Модель импортируйте через её index.ts: @/model/<name>."
+              },
+              {
+                "group": [
+                  "@/tasks/*/**"
+                ],
+                "message": "Глобальную таску импортируйте через её public api: @/tasks/<name>."
               }
             ]
           }
@@ -85,9 +146,67 @@
       }
     },
     {
-      "files": ["src/shared/ui/kit/**"],
+      "files": [
+        "src/shared/ui/kit/**"
+      ],
       "rules": {
         "react/only-export-components": "off"
+      }
+    },
+    {
+      "files": [
+        "src/**/tasks/**"
+      ],
+      "rules": {
+        "no-restricted-imports": [
+          "error",
+          {
+            "patterns": [
+              {
+                "group": [
+                  "react",
+                  "react/**",
+                  "react-dom",
+                  "react-dom/**",
+                  "react-*",
+                  "@tanstack/react-*",
+                  "**/use[A-Z]*"
+                ],
+                "caseSensitive": true,
+                "message": "Таска — обычная JS-функция: никакого React, хуков и React-обёрток библиотек. Со сторами работайте напрямую."
+              },
+              {
+                "group": [
+                  "@/app",
+                  "@/app/**",
+                  "@/components",
+                  "@/components/**"
+                ],
+                "message": "Таска не зависит от UI: можно импортировать shared, model и другие таски."
+              },
+              {
+                "group": [
+                  "**/[A-Z]*/*",
+                  "**/-[A-Z]*/*"
+                ],
+                "caseSensitive": true,
+                "message": "Компонент импортируется только через public api своей папки (index.ts)."
+              },
+              {
+                "group": [
+                  "@/model/*/**"
+                ],
+                "message": "Модель импортируйте через её index.ts: @/model/<name>."
+              },
+              {
+                "group": [
+                  "@/tasks/*/**"
+                ],
+                "message": "Глобальную таску импортируйте через её public api: @/tasks/<name>."
+              }
+            ]
+          }
+        ]
       }
     }
   ]

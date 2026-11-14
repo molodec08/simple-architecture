@@ -1,12 +1,11 @@
 import { keepPreviousData, queryOptions, useQuery } from '@tanstack/react-query'
-import { mapShow } from '@/model/show'
-import { tvmazeApi } from '@/shared/api'
+import { loadShowsPage } from './tasks/load-shows-page'
 
 /** @param apiPage — номер страницы API, начиная с 0 */
 const showsPageQuery = (apiPage: number) =>
   queryOptions({
     queryKey: ['shows', 'list', apiPage],
-    queryFn: async ({ signal }) => (await tvmazeApi.getShows(apiPage, signal)).map(mapShow),
+    queryFn: ({ signal }) => loadShowsPage(apiPage, signal),
     // Индекс TVmaze кэшируется на их стороне до 24 часов — часто обновлять незачем
     staleTime: 10 * 60 * 1000,
   })

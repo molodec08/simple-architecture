@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import type { ShowDetails } from '../show-details'
+import type { ShowDetails } from '../../show-details'
 import { useFormatDate } from './useFormatDate'
 
 export type ShowFactsProps = {

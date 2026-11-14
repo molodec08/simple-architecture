@@ -1,6 +1,6 @@
 import { ErrorState } from '@/components/ErrorState'
 import { BackLink } from '../-components/BackLink'
-import { usePresenter } from './usePresenter'
+import { usePresenter } from './logic/usePresenter'
 
 export const ShowError = () => {
   const { onRetry } = usePresenter()

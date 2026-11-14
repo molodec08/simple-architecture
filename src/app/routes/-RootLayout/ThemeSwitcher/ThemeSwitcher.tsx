@@ -1,6 +1,6 @@
 import { MoonIcon, SunIcon } from 'lucide-react'
 import { Button } from '@/shared/ui/kit/button'
-import { usePresenter } from './usePresenter'
+import { usePresenter } from './logic/usePresenter'
 
 export const ThemeSwitcher = () => {
   const { isDark, ariaLabel, onToggle } = usePresenter()

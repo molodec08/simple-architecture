@@ -1,5 +1,5 @@
 import { Chip } from '@/shared/ui/kit/chip'
-import { type GenreFilterProps, usePresenter } from './usePresenter'
+import { type GenreFilterProps, usePresenter } from './logic/usePresenter'
 
 /** Жанры текущей выдачи в виде тегов: выбор жанра фильтрует список. */
 export const GenreFilter = (props: GenreFilterProps) => {

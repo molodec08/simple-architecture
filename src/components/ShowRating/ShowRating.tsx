@@ -1,5 +1,5 @@
 import { StarIcon } from 'lucide-react'
-import { type ShowRatingProps, usePresenter } from './usePresenter'
+import { type ShowRatingProps, usePresenter } from './logic/usePresenter'
 
 export const ShowRating = (props: ShowRatingProps) => {
   const { hasRating, value, noRatingText } = usePresenter(props)

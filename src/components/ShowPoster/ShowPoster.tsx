@@ -1,5 +1,5 @@
 import { ImageOffIcon } from 'lucide-react'
-import { type ShowPosterProps, usePresenter } from './usePresenter'
+import { type ShowPosterProps, usePresenter } from './logic/usePresenter'
 
 export const ShowPoster = (props: ShowPosterProps) => {
   const { src, alt, hasImage, imageClassName, placeholderClassName, noImageText } = usePresenter(props)

@@ -56,5 +56,8 @@ export const setTheme = (theme: Theme) => {
   for (const listener of listeners) listener()
 }
 
+/** Текущая тема вне React (для тасок). */
+export const getTheme = () => currentTheme
+
 /** Текущая тема приложения: светлая или тёмная. */
 export const useTheme = () => useSyncExternalStore(subscribe, () => currentTheme)

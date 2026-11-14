@@ -3,7 +3,7 @@ import { TvIcon } from 'lucide-react'
 import { Devtools } from './Devtools'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { ThemeSwitcher } from './ThemeSwitcher'
-import { usePresenter } from './usePresenter'
+import { usePresenter } from './logic/usePresenter'
 
 export const RootLayout = () => {
   const { appTitle } = usePresenter()

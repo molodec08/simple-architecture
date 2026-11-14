@@ -1,4 +1,4 @@
-import { type HeroProps, usePresenter } from './usePresenter'
+import { type HeroProps, usePresenter } from './logic/usePresenter'
 
 /** Шапка главной: заголовок с градиентом и поле поиска. При поиске заголовок сворачивается. */
 export const Hero = (props: HeroProps) => {

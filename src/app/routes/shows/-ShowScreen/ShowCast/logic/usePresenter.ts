@@ -1,5 +1,5 @@
 import { useTranslation } from 'react-i18next'
-import type { CastMember } from '../show-details'
+import type { CastMember } from '../../show-details'
 
 export type ShowCastProps = {
   cast: CastMember[]

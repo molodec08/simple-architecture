@@ -1,7 +1,7 @@
 import type { CSSProperties } from 'react'
 import { useTranslation } from 'react-i18next'
 import { hashHue } from '@/shared/lib'
-import type { GenreOption } from '../useGenreFilter'
+import type { GenreOption } from '../../logic/useGenreFilter'
 
 export type GenreFilterProps = {
   genres: GenreOption[]

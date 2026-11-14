@@ -83,12 +83,17 @@ const { page = 1, q = '' } = routeApi.useSearch()
   повторяются до 2 раз.
 
 **Query options рядом с presenter'ом:** запрос описывается через
-`queryOptions` в соседнем с presenter'ом файле, и там же лежит хук, который его
-вызывает (`-HomeScreen/ShowList/useShowsPage.ts`):
+`queryOptions` в папке `logic/` рядом с presenter'ом, и там же лежит хук, который его
+вызывает (`-HomeScreen/ShowList/logic/useShowsPage.ts`). Сама загрузка — таска
+(`logic/tasks/load-shows-page.ts`): обычная функция без React, Query только
+кэширует её результат:
 
 ```ts
 const showsPageQuery = (apiPage: number) =>
-  queryOptions({ queryKey: ['shows', 'list', apiPage], queryFn: ... })
+  queryOptions({
+    queryKey: ['shows', 'list', apiPage],
+    queryFn: ({ signal }) => loadShowsPage(apiPage, signal),
+  })
 
 export const useShowsPage = (page: number) => useQuery(showsPageQuery(page - 1))
 ```
@@ -192,7 +197,7 @@ TypeScript тоже сообщит об ошибке.
 
 1. `locales/de.ts`: `export const de: Translations = { ... }`;
 2. добавить его в `resources` и `supportedLanguages` в `config.ts`;
-3. добавить название в `languageNames` (`app/routes/-RootLayout/LanguageSwitcher/usePresenter.ts`).
+3. добавить название в `languageNames` (`app/routes/-RootLayout/LanguageSwitcher/logic/usePresenter.ts`).
 
 **Почему словари в `.ts`, а не в `.json`:** так проще получить проверку
 структуры через тип `Translations`. Для учебного проекта этого достаточно. В

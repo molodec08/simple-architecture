@@ -4,7 +4,7 @@ import { ShowPoster } from '@/components/ShowPoster'
 import { ShowRating } from '@/components/ShowRating'
 import { ShowStatusBadge } from '@/components/ShowStatusBadge'
 import { Card } from '@/shared/ui/kit/card'
-import { type ResultCardProps, usePresenter } from './usePresenter'
+import { type ResultCardProps, usePresenter } from './logic/usePresenter'
 
 /** Карточка результата: размытый постер подкрашивает шапку в цвета сериала. */
 export const ResultCard = (props: ResultCardProps) => {

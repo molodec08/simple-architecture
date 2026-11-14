@@ -1,6 +1,6 @@
 import { LanguagesIcon } from 'lucide-react'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/shared/ui/kit/select'
-import { usePresenter } from './usePresenter'
+import { usePresenter } from './logic/usePresenter'
 
 export const LanguageSwitcher = () => {
   const { value, ariaLabel, options, onValueChange } = usePresenter()

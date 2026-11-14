@@ -1,6 +1,6 @@
 import { ChevronLeftIcon, ChevronRightIcon } from 'lucide-react'
 import { Button } from '@/shared/ui/kit/button'
-import { type PaginationProps, usePresenter } from './usePresenter'
+import { type PaginationProps, usePresenter } from './logic/usePresenter'
 
 export const Pagination = (props: PaginationProps) => {
   const { prevText, nextText, pageText, isPrevDisabled, isNextDisabled, onPrev, onNext } = usePresenter(props)

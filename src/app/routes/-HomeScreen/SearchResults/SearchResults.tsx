@@ -4,7 +4,7 @@ import { Pagination } from '../components/Pagination'
 import { GenreFilter } from './GenreFilter'
 import { ResultGrid } from './ResultGrid'
 import { ResultGridSkeleton } from './ResultGridSkeleton'
-import { type SearchResultsProps, usePresenter } from './usePresenter'
+import { type SearchResultsProps, usePresenter } from './logic/usePresenter'
 
 export const SearchResults = (props: SearchResultsProps) => {
   const {

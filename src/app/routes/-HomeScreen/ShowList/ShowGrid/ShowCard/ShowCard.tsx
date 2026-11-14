@@ -4,7 +4,7 @@ import { ShowPoster } from '@/components/ShowPoster'
 import { ShowRating } from '@/components/ShowRating'
 import { ShowStatusBadge } from '@/components/ShowStatusBadge'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/shared/ui/kit/card'
-import { type ShowCardProps, usePresenter } from './usePresenter'
+import { type ShowCardProps, usePresenter } from './logic/usePresenter'
 
 export const ShowCard = (props: ShowCardProps) => {
   const { show, linkParams, genres, hasGenres } = usePresenter(props)

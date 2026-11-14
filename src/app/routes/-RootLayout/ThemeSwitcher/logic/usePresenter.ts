@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next'
-import { setTheme, useTheme } from '@/shared/lib'
+import { useTheme } from '@/shared/lib'
+import { toggleTheme } from './tasks/toggle-theme'
 
 export const usePresenter = () => {
   const { t } = useTranslation()
@@ -9,6 +10,6 @@ export const usePresenter = () => {
   return {
     isDark,
     ariaLabel: isDark ? t('common.themeToLight') : t('common.themeToDark'),
-    onToggle: () => setTheme(isDark ? 'light' : 'dark'),
+    onToggle: toggleTheme,
   }
 }

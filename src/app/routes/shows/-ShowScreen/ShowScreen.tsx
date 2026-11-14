@@ -6,7 +6,7 @@ import { ShowStatusBadge } from '@/components/ShowStatusBadge'
 import { BackLink } from '../-components/BackLink'
 import { ShowCast } from './ShowCast'
 import { ShowFacts } from './ShowFacts'
-import { usePresenter } from './usePresenter'
+import { usePresenter } from './logic/usePresenter'
 
 /** Страница сериала. Данные заранее загружает лоадер роутера, поэтому состояний загрузки здесь нет. */
 export const ShowScreen = () => {

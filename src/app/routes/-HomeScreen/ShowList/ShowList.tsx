@@ -3,7 +3,7 @@ import { EmptyState } from '../components/EmptyState'
 import { ShowGrid } from './ShowGrid'
 import { ShowGridSkeleton } from './ShowGridSkeleton'
 import { Pagination } from '../components/Pagination'
-import { type ShowListProps, usePresenter } from './usePresenter'
+import { type ShowListProps, usePresenter } from './logic/usePresenter'
 
 /** Каталог сериалов: постраничный список всех сериалов TVmaze. */
 export const ShowList = (props: ShowListProps) => {
