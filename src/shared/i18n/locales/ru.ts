@@ -12,6 +12,8 @@ export const ru = {
     notFoundTitle: 'Страница не найдена',
     notFoundDescription: 'Такой страницы не существует.',
     language: 'Язык',
+    themeToDark: 'Включить тёмную тему',
+    themeToLight: 'Включить светлую тему',
   },
   show: {
     noImage: 'Нет постера',
@@ -23,17 +25,28 @@ export const ru = {
       'In Development': 'В разработке',
     },
   },
+  home: {
+    heroTitle: 'Найдите свой',
+    heroAccent: 'следующий сериал',
+    heroSubtitle: 'Тысячи шоу из каталога TVmaze: ищите по названию и фильтруйте по жанрам.',
+  },
   showList: {
     title: 'Все сериалы',
+    empty: 'На этой странице сериалов нет.',
+  },
+  pagination: {
     page: 'Страница {{page}}',
+    pageOf: 'Страница {{page}} из {{total}}',
     prev: 'Назад',
     next: 'Вперёд',
-    empty: 'На этой странице сериалов нет.',
   },
   showSearch: {
     placeholder: 'Поиск сериалов…',
     resultsTitle: 'Результаты поиска «{{query}}»',
     empty: 'По запросу «{{query}}» ничего не найдено.',
+    found: 'Найдено: {{total}}',
+    genresLabel: 'Фильтр по жанрам',
+    allGenres: 'Все жанры',
   },
   showDetails: {
     premiered: 'Премьера',

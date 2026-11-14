@@ -1,3 +1,6 @@
 export { cn } from './css'
+export { hashHue } from './hash-hue'
 export { htmlToText } from './html'
-export { useDebouncedValue } from './hooks/use-debounced-value'
+export { useDebouncedCallback } from './hooks/use-debounced-callback'
+export { useRequest, type RequestResult } from './hooks/use-request'
+export { setTheme, useTheme, type Theme } from './theme'

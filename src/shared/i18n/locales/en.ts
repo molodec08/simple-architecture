@@ -10,6 +10,8 @@ export const en: Translations = {
     notFoundTitle: 'Page not found',
     notFoundDescription: 'This page does not exist.',
     language: 'Language',
+    themeToDark: 'Switch to dark theme',
+    themeToLight: 'Switch to light theme',
   },
   show: {
     noImage: 'No poster',
@@ -21,17 +23,28 @@ export const en: Translations = {
       'In Development': 'In development',
     },
   },
+  home: {
+    heroTitle: 'Find your',
+    heroAccent: 'next favorite show',
+    heroSubtitle: 'Thousands of shows from the TVmaze catalog: search by title and filter by genre.',
+  },
   showList: {
     title: 'All shows',
+    empty: 'No shows on this page.',
+  },
+  pagination: {
     page: 'Page {{page}}',
+    pageOf: 'Page {{page}} of {{total}}',
     prev: 'Previous',
     next: 'Next',
-    empty: 'No shows on this page.',
   },
   showSearch: {
     placeholder: 'Search shows…',
     resultsTitle: 'Search results for “{{query}}”',
     empty: 'Nothing found for “{{query}}”.',
+    found: 'Found: {{total}}',
+    genresLabel: 'Filter by genre',
+    allGenres: 'All genres',
   },
   showDetails: {
     premiered: 'Premiered',

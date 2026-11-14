@@ -10,7 +10,7 @@
 | Tailwind CSS                       | 4      | Стили                                       |
 | shadcn/ui (стиль `radix-nova`)     | CLI 4  | Готовые компоненты поверх Radix UI          |
 | i18next + react-i18next            | 27/18  | Локализация (ru, en)                        |
-| oxlint                             | 1.x    | Линтер, в том числе проверка границ слоёв   |
+| oxlint                             | 1.x    | Линтер, в том числе импорт через public api |
 
 Версии указаны на момент создания проекта, точные значения смотрите в
 `package.json`.
@@ -50,7 +50,16 @@ tanstackRouter({
 
 ```ts
 loader: ({ context: { queryClient }, params }) =>
-  queryClient.ensureQueryData(showQueries.detail(params.showId)),
+  queryClient.ensureQueryData(showDetailsQuery(params.showId)),
+```
+
+**Компоненты внутри `routes`:** папки с префиксом `-` (`-HomeScreen/`,
+`shows/-ShowScreen/`) плагин игнорирует (`routeFileIgnorePrefix`, по умолчанию
+`-`), вложенные в них папки — тоже. Экран читает URL через `getRouteApi`:
+
+```ts
+const routeApi = getRouteApi('/')
+const { page = 1, q = '' } = routeApi.useSearch()
 ```
 
 **Типизированные параметры:** `params.parse` в `shows/$showId.tsx`
@@ -73,21 +82,42 @@ loader: ({ context: { queryClient }, params }) =>
 - `retry`: ошибки 4xx не повторяются, кроме 429 (лимит TVmaze); остальные
   повторяются до 2 раз.
 
-**Query options factory:** запросы не описываются прямо в компонентах.
-Они живут в фабрике (`services/show/api/show-queries.ts`):
+**Query options рядом с presenter'ом:** запрос описывается через
+`queryOptions` в соседнем с presenter'ом файле, и там же лежит хук, который его
+вызывает (`-HomeScreen/ShowList/useShowsPage.ts`):
 
 ```ts
-const { data } = useQuery(showQueries.list(0))          // в компоненте
-await queryClient.ensureQueryData(showQueries.detail(1)) // в лоадере
-queryClient.invalidateQueries({ queryKey: showQueries.all() })
+const showsPageQuery = (apiPage: number) =>
+  queryOptions({ queryKey: ['shows', 'list', apiPage], queryFn: ... })
+
+export const useShowsPage = (page: number) => useQuery(showsPageQuery(page - 1))
 ```
 
-Так ключ и функция запроса всегда совпадают, и TypeScript выводит тип `data`.
+Если запрос нужен ещё и лоадеру, `queryOptions` экспортируется из `index.ts`
+экрана (`showDetailsQuery` из `shows/-ShowScreen`). Так ключ и функция запроса
+всегда совпадают, и TypeScript выводит тип `data`. Все ключи начинаются с
+`'shows'`, поэтому `invalidateQueries({ queryKey: ['shows'] })` сбросит всё.
 
 **`signal`:** в `queryFn` передаётся `AbortSignal`. Если запрос стал не нужен
 (например, пользователь ввёл следующий символ в поиске), `fetch` отменяется.
 
 **Devtools:** в dev-режиме в левом нижнем углу.
+
+**Исключение — поиск (`-HomeScreen/SearchResults/useSearchShows.ts`)** сделан без
+TanStack Query, на хуке `useRequest` из `@/shared/lib`:
+
+- debounce ввода (400 мс) — в `SearchInput/useSearchDraft.ts`, запрос уходит
+  только после паузы в наборе. Очистка поля применяется сразу, без задержки.
+  Если за время задержки текст вернулся к уже применённому запросу
+  (`forest` → `fores` → `forest`), ничего не происходит: нет запроса, страница
+  и жанр не сбрасываются;
+- смена запроса отменяет предыдущий `fetch` через `AbortController`; ответ
+  принимается, только если относится к текущему ключу (нет race condition);
+- `isLoading` / `isError` / `retry()` — состояния загрузки и ошибки;
+- кэша нет: повторный заход на тот же запрос снова идёт в сеть.
+
+Пагинация (по 3) и фильтр по жанрам в выдаче — клиентские: API поиска отдаёт
+все результаты сразу. Страница и жанр лежат в URL (`?q=…&genre=…&page=…`).
 
 ---
 
@@ -149,7 +179,7 @@ src/shared/i18n/
 **Использование:**
 
 ```tsx
-const { t, i18n } = useTranslation()
+const { t, i18n } = useTranslation()   // только в хуках (usePresenter), не во View
 t('showList.page', { page: 2 })   // "Страница 2"
 i18n.changeLanguage('en')
 ```
@@ -162,7 +192,7 @@ TypeScript тоже сообщит об ошибке.
 
 1. `locales/de.ts`: `export const de: Translations = { ... }`;
 2. добавить его в `resources` и `supportedLanguages` в `config.ts`;
-3. добавить название в `languageNames` (`features/language-switcher`).
+3. добавить название в `languageNames` (`app/routes/-RootLayout/LanguageSwitcher/usePresenter.ts`).
 
 **Почему словари в `.ts`, а не в `.json`:** так проще получить проверку
 структуры через тип `Translations`. Для учебного проекта этого достаточно. В
