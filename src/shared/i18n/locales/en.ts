@@ -31,6 +31,7 @@ export const en: Translations = {
   showList: {
     title: 'All shows',
     empty: 'No shows on this page.',
+    emptyGenre: 'No {{genre}} shows on this page.',
   },
   pagination: {
     page: 'Page {{page}}',
@@ -45,6 +46,17 @@ export const en: Translations = {
     found: 'Found: {{total}}',
     genresLabel: 'Filter by genre',
     allGenres: 'All genres',
+  },
+  favorites: {
+    title: 'Favorites',
+    linkLabel: 'Favorites: {{count}}',
+    count: 'Shows: {{count}}',
+    empty: 'No favorites yet. Mark shows with a star.',
+    add: 'Add to favorites',
+    remove: 'Remove from favorites',
+    added: '“{{name}}” added to favorites',
+    removed: '“{{name}}” removed from favorites',
+    error: 'Failed to update favorites. Please try again.',
   },
   showDetails: {
     premiered: 'Premiered',

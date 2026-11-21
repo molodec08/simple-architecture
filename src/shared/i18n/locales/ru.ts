@@ -33,6 +33,7 @@ export const ru = {
   showList: {
     title: 'Все сериалы',
     empty: 'На этой странице сериалов нет.',
+    emptyGenre: 'На этой странице нет сериалов жанра «{{genre}}».',
   },
   pagination: {
     page: 'Страница {{page}}',
@@ -47,6 +48,17 @@ export const ru = {
     found: 'Найдено: {{total}}',
     genresLabel: 'Фильтр по жанрам',
     allGenres: 'Все жанры',
+  },
+  favorites: {
+    title: 'Избранное',
+    linkLabel: 'Избранное: {{count}}',
+    count: 'Сериалов: {{count}}',
+    empty: 'В избранном пока пусто. Отмечайте сериалы звёздочкой.',
+    add: 'Добавить в избранное',
+    remove: 'Убрать из избранного',
+    added: '«{{name}}» добавлен в избранное',
+    removed: '«{{name}}» убран из избранного',
+    error: 'Не удалось обновить избранное. Попробуйте ещё раз.',
   },
   showDetails: {
     premiered: 'Премьера',

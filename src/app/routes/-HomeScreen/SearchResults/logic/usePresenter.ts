@@ -1,9 +1,8 @@
 import { useTranslation } from 'react-i18next'
-import { useGenreFilter } from './useGenreFilter'
-import { usePageSlice } from './usePageSlice'
 import { useSearchShows } from './useSearchShows'
 
-const PAGE_SIZE = 3
+/** Сколько карточек-заглушек показать, пока идёт поиск (backend отдаёт по 3) */
+const SKELETON_COUNT = 3
 
 export type SearchResultsProps = {
   query: string
@@ -16,24 +15,25 @@ export type SearchResultsProps = {
 
 export const usePresenter = ({ query, page, genre, onPageChange, onGenreChange }: SearchResultsProps) => {
   const { t } = useTranslation()
-  const { data, isLoading, isError, retry } = useSearchShows(query)
-  const { genres, activeGenre, filteredShows } = useGenreFilter(data ?? [], genre)
-  const { pageItems, currentPage, pageCount } = usePageSlice(filteredShows, page, PAGE_SIZE)
+  const { data, isLoading, isError, retry } = useSearchShows(query, page, genre)
+  const shows = data?.items ?? []
+  const genres = data?.genres ?? []
+  const pageCount = data?.pageCount ?? 1
 
   return {
     title: t('showSearch.resultsTitle', { query }),
     emptyText: t('showSearch.empty', { query }),
-    foundText: t('showSearch.found', { total: filteredShows.length }),
-    skeletonCount: PAGE_SIZE,
-    shows: pageItems,
+    foundText: t('showSearch.found', { total: data?.total ?? 0 }),
+    skeletonCount: SKELETON_COUNT,
+    shows,
     isLoading,
     isError,
-    isEmpty: data?.length === 0,
-    hasShows: pageItems.length > 0,
+    isEmpty: data?.total === 0,
+    hasShows: shows.length > 0,
     isGenreFilterVisible: genres.length > 0,
     isPaginationVisible: pageCount > 1,
     onRetry: retry,
-    genreFilter: { genres, activeGenre, onChange: onGenreChange },
-    pagination: { page: currentPage, pageCount, hasNext: currentPage < pageCount, onPageChange },
+    genreFilter: { genres, activeGenre: data?.activeGenre, onChange: onGenreChange },
+    pagination: { page: data?.page ?? page, pageCount, hasNext: data?.hasNext ?? false, onPageChange },
   }
 }

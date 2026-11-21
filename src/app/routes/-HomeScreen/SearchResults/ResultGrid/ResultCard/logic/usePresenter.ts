@@ -10,6 +10,7 @@ export const usePresenter = ({ show }: ResultCardProps) => {
   const year = show.premiered?.slice(0, 4) ?? null
 
   return {
+    showId: show.id,
     linkParams: { showId: show.id },
     name: show.name,
     posterUrl: show.posterUrl,

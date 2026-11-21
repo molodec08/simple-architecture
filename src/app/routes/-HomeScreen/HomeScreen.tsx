@@ -21,7 +21,7 @@ export const HomeScreen = () => {
           onGenreChange={onGenreChange}
         />
       ) : (
-        <ShowList page={page} onPageChange={onPageChange} />
+        <ShowList page={page} genre={genre} onPageChange={onPageChange} onGenreChange={onGenreChange} />
       )}
     </div>
   )

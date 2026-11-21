@@ -1,12 +1,14 @@
 import { Link, Outlet } from '@tanstack/react-router'
 import { TvIcon } from 'lucide-react'
+import { Toaster } from '@/shared/ui/kit/sonner'
 import { Devtools } from './Devtools'
+import { FavoritesLink } from './FavoritesLink'
 import { LanguageSwitcher } from './LanguageSwitcher'
 import { ThemeSwitcher } from './ThemeSwitcher'
 import { usePresenter } from './logic/usePresenter'
 
 export const RootLayout = () => {
-  const { appTitle } = usePresenter()
+  const { appTitle, toasterTheme } = usePresenter()
 
   return (
     <div className="relative isolate min-h-svh overflow-x-clip bg-background text-foreground">
@@ -25,6 +27,7 @@ export const RootLayout = () => {
             {appTitle}
           </Link>
           <div className="flex items-center gap-2">
+            <FavoritesLink />
             <LanguageSwitcher />
             <ThemeSwitcher />
           </div>
@@ -34,6 +37,7 @@ export const RootLayout = () => {
       <main className="container mx-auto px-4 py-10">
         <Outlet />
       </main>
+      <Toaster theme={toasterTheme} position="bottom-center" richColors />
       <Devtools />
     </div>
   )

@@ -1,14 +1,27 @@
+import { EmptyState } from '@/components/EmptyState'
 import { ErrorState } from '@/components/ErrorState'
-import { EmptyState } from '../components/EmptyState'
-import { ShowGrid } from './ShowGrid'
-import { ShowGridSkeleton } from './ShowGridSkeleton'
+import { ShowGrid } from '@/components/ShowGrid'
+import { ShowGridSkeleton } from '@/components/ShowGridSkeleton'
+import { GenreFilter } from '../components/GenreFilter'
 import { Pagination } from '../components/Pagination'
 import { type ShowListProps, usePresenter } from './logic/usePresenter'
 
-/** Каталог сериалов: постраничный список всех сериалов TVmaze. */
+/** Каталог сериалов: постраничный список всех сериалов с фильтром по жанру внутри страницы. */
 export const ShowList = (props: ShowListProps) => {
-  const { title, emptyText, shows, isLoading, isError, isEmpty, hasShows, gridClassName, onRetry, pagination } =
-    usePresenter(props)
+  const {
+    title,
+    emptyText,
+    shows,
+    isLoading,
+    isError,
+    isEmpty,
+    hasShows,
+    isGenreFilterVisible,
+    gridClassName,
+    onRetry,
+    genreFilter,
+    pagination,
+  } = usePresenter(props)
 
   return (
     <section className="flex flex-col gap-6">
@@ -17,6 +30,7 @@ export const ShowList = (props: ShowListProps) => {
         <Pagination {...pagination} />
       </div>
 
+      {isGenreFilterVisible && <GenreFilter {...genreFilter} />}
       {isLoading && <ShowGridSkeleton />}
       {isError && <ErrorState onRetry={onRetry} />}
       {isEmpty && <EmptyState>{emptyText}</EmptyState>}

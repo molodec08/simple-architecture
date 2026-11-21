@@ -11,6 +11,8 @@
 | shadcn/ui (стиль `radix-nova`)     | CLI 4  | Готовые компоненты поверх Radix UI          |
 | i18next + react-i18next            | 27/18  | Локализация (ru, en)                        |
 | oxlint                             | 1.x    | Линтер, в том числе импорт через public api |
+| sonner (shadcn `sonner`)           | 2.x    | Toast-уведомления                           |
+| NestJS (отдельный репозиторий)     | 12     | Backend: TVmaze, кеш, жанры, избранное      |
 
 Версии указаны на момент создания проекта, точные значения смотрите в
 `package.json`.
@@ -84,24 +86,26 @@ const { page = 1, q = '' } = routeApi.useSearch()
 
 **Query options рядом с presenter'ом:** запрос описывается через
 `queryOptions` в папке `logic/` рядом с presenter'ом, и там же лежит хук, который его
-вызывает (`-HomeScreen/ShowList/logic/useShowsPage.ts`). Сама загрузка — таска
-(`logic/tasks/load-shows-page.ts`): обычная функция без React, Query только
+вызывает (`-HomeScreen/ShowList/logic/useCatalogPage.ts`). Сама загрузка — таска
+(`logic/tasks/load-catalog-page.ts`): обычная функция без React, Query только
 кэширует её результат:
 
 ```ts
-const showsPageQuery = (apiPage: number) =>
+const catalogPageQuery = (page: number, genre: string | undefined) =>
   queryOptions({
-    queryKey: ['shows', 'list', apiPage],
-    queryFn: ({ signal }) => loadShowsPage(apiPage, signal),
+    queryKey: ['shows', 'list', page, genre ?? null],
+    queryFn: ({ signal }) => loadCatalogPage(page, genre, signal),
   })
-
-export const useShowsPage = (page: number) => useQuery(showsPageQuery(page - 1))
 ```
+
+Избранное целиком живёт в `components/FavoriteToggle` (запрос, мутация, таски);
+`useFavorites` экспортируется из его `index.ts` для шапки и страницы `/favorites`. Мутация после ответа сбрасывает ключ
+`['favorites']`, и кнопка в шапке, звёздочки и страница избранного обновляются разом.
 
 Если запрос нужен ещё и лоадеру, `queryOptions` экспортируется из `index.ts`
 экрана (`showDetailsQuery` из `shows/-ShowScreen`). Так ключ и функция запроса
 всегда совпадают, и TypeScript выводит тип `data`. Все ключи начинаются с
-`'shows'`, поэтому `invalidateQueries({ queryKey: ['shows'] })` сбросит всё.
+`'shows'`, поэтому `invalidateQueries({ queryKey: ['shows'] })` сбросит все сериалы.
 
 **`signal`:** в `queryFn` передаётся `AbortSignal`. Если запрос стал не нужен
 (например, пользователь ввёл следующий символ в поиске), `fetch` отменяется.
@@ -119,10 +123,10 @@ TanStack Query, на хуке `useRequest` из `@/shared/lib`:
 - смена запроса отменяет предыдущий `fetch` через `AbortController`; ответ
   принимается, только если относится к текущему ключу (нет race condition);
 - `isLoading` / `isError` / `retry()` — состояния загрузки и ошибки;
-- кэша нет: повторный заход на тот же запрос снова идёт в сеть.
+- клиентского кэша нет: повторный заход снова идёт в сеть (backend отдаст из своего кеша).
 
-Пагинация (по 3) и фильтр по жанрам в выдаче — клиентские: API поиска отдаёт
-все результаты сразу. Страница и жанр лежат в URL (`?q=…&genre=…&page=…`).
+Пагинация (по 3) и фильтр по жанрам — на backend: ключ запроса — `[q, page, genre]`.
+Страница и жанр лежат в URL (`?q=…&genre=…&page=…`).
 
 ---
 
@@ -208,20 +212,25 @@ TypeScript тоже сообщит об ошибке.
 
 ---
 
-## TVmaze API
+## Наш backend
 
-- Базовый URL: `https://api.tvmaze.com` (можно переопределить через
-  `VITE_TVMAZE_API_URL`, см. `.env.example`).
-- Ключ не нужен, CORS разрешён.
-- Лимит: не меньше 20 запросов за 10 секунд с одного IP. При превышении
-  приходит `429`.
+Отдельный репозиторий `../simple-architecture-backend` (NestJS 12). Запуск:
+`npm run start:dev` (порт 3000). В dev Vite проксирует `/api` на него
+(`server.proxy` в `vite.config.ts`, цель — `API_PROXY_TARGET`), поэтому CORS не нужен.
+Базовый URL клиента — `VITE_API_URL` (по умолчанию `/api`), см. `.env.example`.
 
-Используемые эндпоинты:
+| Метод (`shared/api`)                 | Запрос                                    | Ответ                                    |
+| ------------------------------------ | ----------------------------------------- | ---------------------------------------- |
+| `showsApi.getCatalog(page, genre)`   | `GET /api/shows?page=N&genre=G`           | `ShowsPageDto`, `pageCount: null`        |
+| `showsApi.search(q, page, genre)`    | `GET /api/shows/search?q=…&page=N&genre=G` | `ShowsPageDto`, по 3 на страницу        |
+| `showsApi.getShow(id)`               | `GET /api/shows/:id`                      | `ShowDetailsDto` (с актёрами), 404       |
+| `favoritesApi.getAll()`              | `GET /api/favorites`                      | `ShowDto[]`, новые первыми               |
+| `favoritesApi.toggle(id)`            | `POST /api/favorites/:id/toggle`          | `{ isFavorite, show }`                   |
 
-| Метод `tvmazeApi`   | Запрос                      | Примечание                                            |
-| ------------------- | --------------------------- | ----------------------------------------------------- |
-| `getShows(page)`    | `GET /shows?page=N`         | До 250 сериалов на страницу, `page` с 0. За концом списка приходит 404, мы превращаем его в `[]` |
-| `searchShows(q)`    | `GET /search/shows?q=...`   | Ответ: `[{ score, show }]`, нечёткий поиск            |
-| `getShow(id)`       | `GET /shows/:id?embed=cast` | Сериал + актёрский состав в `_embedded.cast`          |
+`page` везде начинается с 1. Страница каталога — страница индекса TVmaze (до 250
+сериалов), жанр фильтруется внутри неё: у TVmaze нет фильтра по жанру, а страницы
+индекса — диапазоны id с пропусками, так что «ровные» страницы по N штук без загрузки
+всех предыдущих не посчитать. Ответы TVmaze backend кеширует на 5 минут.
 
-Документация: https://www.tvmaze.com/api
+Ошибки: 400 — кривые параметры, 404 — сериала нет, 429 — лимит TVmaze,
+502 — TVmaze недоступен. Документация TVmaze: https://www.tvmaze.com/api

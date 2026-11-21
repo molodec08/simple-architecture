@@ -1,5 +1,5 @@
 import { Skeleton } from '@/shared/ui/kit/skeleton'
-import { ShowGridLayout } from '../components/ShowGridLayout'
+import { ShowGridLayout } from '@/components/ShowGridLayout'
 import { usePresenter } from './logic/usePresenter'
 
 export const ShowGridSkeleton = () => {

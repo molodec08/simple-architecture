@@ -19,3 +19,25 @@ export type Show = {
   posterUrl: string | null
   summary: string
 }
+
+/** Жанр выдачи и сколько сериалов к нему относится */
+export type GenreOption = {
+  name: string
+  count: number
+}
+
+/** Страница выдачи (каталог или поиск). Пагинацию и фильтр по жанру делает backend. */
+export type ShowsPage = {
+  items: Show[]
+  /** Текущая страница, начиная с 1 (backend прижимает её к краю выдачи) */
+  page: number
+  /** Всего страниц; `null` — неизвестно (каталог) */
+  pageCount: number | null
+  hasNext: boolean
+  /** Сколько сериалов подходит под фильтр */
+  total: number
+  /** Жанры всей выдачи — варианты для фильтра */
+  genres: GenreOption[]
+  /** Применённый жанр; жанр, которого нет в выдаче, backend игнорирует */
+  activeGenre: string | undefined
+}

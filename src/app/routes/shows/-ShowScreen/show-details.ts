@@ -1,5 +1,5 @@
 import { mapShow, type Show } from '@/model/show'
-import type { TvmazeShowWithCastDto } from '@/shared/api'
+import type { ShowDetailsDto } from '@/shared/api'
 
 export type CastMember = {
   personId: number
@@ -18,18 +18,13 @@ export type ShowDetails = Show & {
   cast: CastMember[]
 }
 
-export const mapShowDetails = (dto: TvmazeShowWithCastDto): ShowDetails => ({
+export const mapShowDetails = (dto: ShowDetailsDto): ShowDetails => ({
   ...mapShow(dto),
   ended: dto.ended,
   language: dto.language,
-  network: dto.network?.name ?? dto.webChannel?.name ?? null,
-  runtime: dto.runtime ?? dto.averageRuntime,
+  network: dto.network,
+  runtime: dto.runtime,
   officialSite: dto.officialSite,
-  posterUrlLarge: dto.image?.original ?? null,
-  cast: (dto._embedded?.cast ?? []).map(({ person, character }) => ({
-    personId: person.id,
-    personName: person.name,
-    characterName: character.name,
-    photoUrl: character.image?.medium ?? person.image?.medium ?? null,
-  })),
+  posterUrlLarge: dto.posterUrlLarge,
+  cast: dto.cast.map((member) => ({ ...member })),
 })

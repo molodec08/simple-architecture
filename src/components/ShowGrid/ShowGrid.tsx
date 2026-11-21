@@ -1,5 +1,5 @@
 import type { Show } from '@/model/show'
-import { ShowGridLayout } from '../components/ShowGridLayout'
+import { ShowGridLayout } from '@/components/ShowGridLayout'
 import { ShowCard } from './ShowCard'
 
 export const ShowGrid = ({ shows }: { shows: Show[] }) => (

@@ -82,14 +82,17 @@ Messenger/
 
 ```text
 app/routes/
-├── __root.tsx            → -RootLayout/ (LanguageSwitcher, ThemeSwitcher, Devtools)
-├── index.tsx             → -HomeScreen/ (Hero, SearchInput, SearchResults/{GenreFilter, ResultGrid}, ShowList/{ShowGrid, components/ShowGridLayout}, components/{Pagination, EmptyState})
+├── __root.tsx            → -RootLayout/ (FavoritesLink, LanguageSwitcher, ThemeSwitcher, Devtools, Toaster)
+├── index.tsx             → -HomeScreen/ (Hero, SearchInput, SearchResults/{ResultGrid}, ShowList, components/{GenreFilter, Pagination})
+├── favorites.tsx         → -FavoritesScreen/
 └── shows/$showId.tsx     → -ShowScreen/ (ShowFacts, ShowCast), -ShowError, -ShowNotFound, -ShowSkeleton, -components/
+
+components/   ShowGrid/ShowCard, ShowGridSkeleton, ShowGridLayout, EmptyState, FavoriteToggle, …
 ```
 
 **7.4. URL читает Presenter экрана** через `getRouteApi('<путь>')`. Дочерние компоненты получают значения через props.
 
-**7.5. Данные лежат рядом с Presenter, который их использует.** `queryOptions` и хук запроса — в `logic/` (`ShowList/logic/useShowsPage.ts`). Загрузка — таска (`logic/tasks/load-shows-page.ts`), `queryFn` лишь вызывает её: TanStack Query — инструмент кэширования, а не бизнес-логика. Если запрос нужен ещё и `loader` маршрута, он экспортируется из `index.ts` экрана (`showDetailsQuery`). Ключи иерархические: `['shows', 'list', page]`.
+**7.5. Данные лежат рядом с Presenter, который их использует.** `queryOptions` и хук запроса — в `logic/` (`ShowList/logic/useCatalogPage.ts`). Загрузка — таска (`logic/tasks/load-catalog-page.ts`), `queryFn` лишь вызывает её: TanStack Query — инструмент кэширования, а не бизнес-логика. Если запрос нужен ещё и `loader` маршрута, он экспортируется из `index.ts` экрана (`showDetailsQuery`). Ключи иерархические: `['shows', 'list', page, genre]`.
 
 **7.6. Доменная модель.** Модель, нужная нескольким веткам, лежит в `src/model/<name>` (типы и мапперы DTO → модель) и импортируется через `index.ts`. Модель одной ветки лежит в этой ветке (`-ShowScreen/show-details.ts`). DTO не выходят за пределы `shared/api` и мапперов.
 
@@ -99,7 +102,7 @@ app/routes/
 
 **7.9. Именование.** Папки и файлы View — `PascalCase`, хуки — `useXxx.ts`, остальные модули (запросы, мапперы, типы) — `kebab-case`.
 
-**7.10. `shared` — инфраструктура без бизнес-смысла:** `api`, `config`, `i18n`, `lib`, `ui/kit`. Не импортирует `app`, `components`, `model` и `tasks`. Примитивы shadcn в `ui/kit` не делятся на View/Presenter, но лимит 120 строк на них действует: большой файл разбивается в папку (`kit/select/`).
+**7.10. `shared` — инфраструктура без бизнес-смысла:** `api`, `config`, `i18n`, `lib`, `ui/kit`. Не импортирует `app`, `components`, `model` и `tasks`. `shared/api` — клиент **нашего backend**, а не TVmaze. Примитивы shadcn в `ui/kit` не делятся на View/Presenter, но лимит 120 строк на них действует: большой файл разбивается в папку (`kit/select/`).
 
 **7.11. Линтер проверяет public api:** импорт в папку компонента, модели или глобальной таски — только через `index.ts` (`no-restricted-imports` в `.oxlintrc.json`). Файлам в `tasks/` линтер запрещает импорт React, хуков, `@/app` и `@/components`.
 
@@ -112,3 +115,19 @@ app/routes/
 | компоненты дерева | папки экранов в `src/app/routes` | непереиспользуемые компоненты; используют ui-kit, components и свои вложенные компоненты |
 
 Направление зависимостей: дерево → components → ui-kit. ui-kit не знает ни о чём выше себя.
+
+**7.13. Переиспользуемая фича — это компонент со своей логикой.** Избранное целиком живёт в `components/FavoriteToggle`: View-звёздочка, Presenter, запрос списка, мутация и таски `load-favorites`/`toggle-favorite` в `logic/`. Если данные фичи нужны другим веткам (счётчик в шапке, страница `/favorites`), компонент экспортирует хук из своего `index.ts` (`useFavorites`) — так же, как экран отдаёт `showDetailsQuery` лоадеру (7.5). Отдельный слой для данных не заводим.
+
+**7.14. Уведомления (toast) — в Presenter.** Как и навигация (1.7), уведомление — реакция среды на результат таски, а не бизнес-логика. Presenter вызывает `toast` из `@/shared/ui/kit/sonner` в `onSuccess`/`onError` мутации.
+
+## 8. Frontend и backend
+
+Источник: домашнее задание 2 («From Frontend to Fullstack»). Backend — отдельный репозиторий `simple-architecture-backend` (NestJS) в соседней папке, правила его архитектуры — в его `docs/ARCHITECTURE.md`.
+
+**8.1. Бизнес-логика живёт на backend.** Всё, что решает, *какие данные* увидит пользователь, — на сервере: работа с TVmaze, кеш (5 минут), пагинация, фильтр по жанрам, очистка HTML, решение «добавить или убрать из избранного», хранение избранного.
+
+**8.2. Frontend показывает и реагирует.** Presenter берёт готовую страницу выдачи (`ShowsPage`: `items`, `page`, `pageCount`, `hasNext`, `total`, `genres`, `activeGenre`) и превращает её в пропсы View. Таски frontend — тонкие: вызвать эндпоинт и смапить DTO в модель. Нельзя повторно фильтровать, сортировать или нарезать данные на клиенте «на всякий случай».
+
+**8.3. Что остаётся на клиенте.** Состояние URL (`q`, `page`, `genre`), debounce ввода, кеш TanStack Query, тема и язык, навигация, toast. Отметка «в избранном» у карточки — сравнение `id` со списком избранного (`useFavorites` из `@/components/FavoriteToggle`): это отображение, решение о переключении принимает сервер (`POST /api/favorites/:id/toggle`).
+
+**8.4. Контракт.** Типы ответов backend описаны как DTO в `shared/api/backend/types.ts` и мапятся в модели (`model/show`). Меняешь ответ backend — меняй DTO и маппер вместе.
