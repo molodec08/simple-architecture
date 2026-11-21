@@ -1,4 +1,5 @@
 import { ExternalLinkIcon } from 'lucide-react'
+import { FavoriteToggle } from '@/components/FavoriteToggle'
 import { GenreBadge } from '@/components/GenreBadge'
 import { ShowPoster } from '@/components/ShowPoster'
 import { ShowRating } from '@/components/ShowRating'
@@ -6,7 +7,7 @@ import { ShowStatusBadge } from '@/components/ShowStatusBadge'
 import { BackLink } from '../-components/BackLink'
 import { ShowCast } from './ShowCast'
 import { ShowFacts } from './ShowFacts'
-import { usePresenter } from './usePresenter'
+import { usePresenter } from './logic/usePresenter'
 
 /** Страница сериала. Данные заранее загружает лоадер роутера, поэтому состояний загрузки здесь нет. */
 export const ShowScreen = () => {
@@ -25,7 +26,10 @@ export const ShowScreen = () => {
 
           <div className="flex flex-col gap-5">
             <div className="flex flex-col gap-3">
-              <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{show.name}</h1>
+              <div className="flex items-start gap-3">
+                <h1 className="text-3xl font-extrabold tracking-tight sm:text-4xl">{show.name}</h1>
+                <FavoriteToggle showId={show.id} className="mt-1.5 shrink-0" />
+              </div>
               <div className="flex flex-wrap items-center gap-3">
                 <ShowRating rating={show.rating} />
                 <ShowStatusBadge status={show.status} />

@@ -1,6 +1,6 @@
 import { Link } from '@tanstack/react-router'
 import { Button } from '@/shared/ui/kit/button'
-import { type NotFoundProps, usePresenter } from './usePresenter'
+import { type NotFoundProps, usePresenter } from './logic/usePresenter'
 
 export const NotFound = (props: NotFoundProps) => {
   const { title, description, backText } = usePresenter(props)

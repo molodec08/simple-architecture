@@ -1,5 +1,5 @@
 import { NotFound } from '@/components/NotFound'
-import { usePresenter } from './usePresenter'
+import { usePresenter } from './logic/usePresenter'
 
 export const ShowNotFound = () => {
   const { description } = usePresenter()

@@ -1,6 +1,6 @@
 import { SearchIcon } from 'lucide-react'
 import { Input } from '@/shared/ui/kit/input'
-import { type SearchInputProps, usePresenter } from './usePresenter'
+import { type SearchInputProps, usePresenter } from './logic/usePresenter'
 
 export const SearchInput = (props: SearchInputProps) => {
   const { draft, placeholder, onDraftChange } = usePresenter(props)

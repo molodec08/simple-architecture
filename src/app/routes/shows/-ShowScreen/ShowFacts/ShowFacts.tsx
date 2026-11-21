@@ -1,4 +1,4 @@
-import { type ShowFactsProps, usePresenter } from './usePresenter'
+import { type ShowFactsProps, usePresenter } from './logic/usePresenter'
 
 export const ShowFacts = (props: ShowFactsProps) => {
   const { facts } = usePresenter(props)

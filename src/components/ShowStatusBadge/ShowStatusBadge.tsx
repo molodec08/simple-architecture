@@ -1,5 +1,5 @@
 import { Badge } from '@/shared/ui/kit/badge'
-import { type ShowStatusBadgeProps, usePresenter } from './usePresenter'
+import { type ShowStatusBadgeProps, usePresenter } from './logic/usePresenter'
 
 export const ShowStatusBadge = (props: ShowStatusBadgeProps) => {
   const { label, isRunning, className } = usePresenter(props)

@@ -1,5 +1,5 @@
 import { Skeleton } from '@/shared/ui/kit/skeleton'
-import { type ResultGridSkeletonProps, usePresenter } from './usePresenter'
+import { type ResultGridSkeletonProps, usePresenter } from './logic/usePresenter'
 
 export const ResultGridSkeleton = (props: ResultGridSkeletonProps) => {
   const { placeholders } = usePresenter(props)

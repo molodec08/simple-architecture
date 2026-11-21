@@ -4,6 +4,7 @@
  * не зависел от Vite напрямую.
  */
 export const env = {
-  tvmazeApiUrl: import.meta.env.VITE_TVMAZE_API_URL ?? 'https://api.tvmaze.com',
+  /** Наш backend. В dev `/api` проксируется Vite на localhost:3000 */
+  apiUrl: import.meta.env.VITE_API_URL ?? '/api',
   isDev: import.meta.env.DEV,
 } as const

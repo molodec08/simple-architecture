@@ -3,10 +3,16 @@ import react, { reactCompilerPreset } from '@vitejs/plugin-react'
 import babel from '@rolldown/plugin-babel'
 import tailwindcss from '@tailwindcss/vite'
 import { tanstackRouter } from '@tanstack/router-plugin/vite'
-import { defineConfig } from 'vite'
+import { defineConfig, loadEnv } from 'vite'
 
 // https://vite.dev/config/
-export default defineConfig({
+export default defineConfig(({ mode }) => ({
+  server: {
+    // Запросы к нашему backend идут через dev-сервер: один origin, без CORS
+    proxy: {
+      '/api': loadEnv(mode, process.cwd(), '').API_PROXY_TARGET || 'http://localhost:3000',
+    },
+  },
   plugins: [
     // Плагин роутера должен идти ДО плагина react
     tanstackRouter({
@@ -24,4 +30,4 @@ export default defineConfig({
       '@': path.resolve(import.meta.dirname, './src'),
     },
   },
-})
+}))

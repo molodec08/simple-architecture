@@ -1,5 +1,5 @@
 import { UserIcon } from 'lucide-react'
-import { type ShowCastProps, usePresenter } from './usePresenter'
+import { type ShowCastProps, usePresenter } from './logic/usePresenter'
 
 export const ShowCast = (props: ShowCastProps) => {
   const { title, members } = usePresenter(props)
